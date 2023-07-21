@@ -11,10 +11,10 @@ gpio_pin = 4
 
 temperature = 0.0
 humidity = 0.0
-time = datetime.datetime.now()
+current_time = datetime.datetime.now()
 
 def read_sensor():
-    global temperature, humidity, time
+    global temperature, humidity, current_time
     while True:
         # Read temperature and humidity data from the sensor
         new_humidity, new_temperature = Adafruit_DHT.read_retry(sensor, gpio_pin)
@@ -23,7 +23,7 @@ def read_sensor():
         if new_humidity is not None and new_temperature is not None:
             temperature = new_temperature
             humidity = new_humidity
-            time = datetime.datetime.now()
+            current_time = datetime.datetime.now()
 
         # Wait for some time before taking the next reading (e.g., 2 seconds)
         time.sleep(2)
@@ -38,7 +38,7 @@ def get_data():
     data = {
         'temperature': temperature,
         'humidity': humidity,
-        'time' : time
+        'time' : current_time
     }
     return jsonify(data)
 
