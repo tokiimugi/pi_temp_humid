@@ -1,6 +1,8 @@
 from flask import Flask, jsonify
 import Adafruit_DHT
 import time
+import datetime
+
 
 app = Flask(__name__)
 
@@ -9,17 +11,19 @@ gpio_pin = 4
 
 temperature = 0.0
 humidity = 0.0
+time = datetime.datetime.now()
 
 def read_sensor():
-    global temperature, humidity
+    global temperature, humidity, time
     while True:
         # Read temperature and humidity data from the sensor
         new_humidity, new_temperature = Adafruit_DHT.read_retry(sensor, gpio_pin)
-
+        
         # Update the global variables only if the data retrieval was successful
         if new_humidity is not None and new_temperature is not None:
             temperature = new_temperature
             humidity = new_humidity
+            time = datetime.datetime.now()
 
         # Wait for some time before taking the next reading (e.g., 2 seconds)
         time.sleep(2)
@@ -33,7 +37,8 @@ sensor_thread.start()
 def get_data():
     data = {
         'temperature': temperature,
-        'humidity': humidity
+        'humidity': humidity,
+        'time' : time
     }
     return jsonify(data)
 
