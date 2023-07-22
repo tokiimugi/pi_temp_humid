@@ -1,10 +1,13 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
+from flask_socketio import SocketIO
 import Adafruit_DHT
 import time
 import datetime
 
 
 app = Flask(__name__)
+socketio = SocketIO(app)
+
 
 sensor = Adafruit_DHT.DHT22
 gpio_pin = 4
@@ -24,7 +27,12 @@ def read_sensor():
             temperature = new_temperature
             humidity = new_humidity
             current_time = datetime.datetime.now()
-
+        data = {
+        'temperature': temperature,
+        'humidity': humidity,
+        'time' : current_time
+    }
+        socketio.emit('update_data', data, namespace='/data', broadcast=True)
         # Wait for some time before taking the next reading (e.g., 2 seconds)
         time.sleep(2)
 
@@ -33,18 +41,9 @@ sensor_thread = threading.Thread(target=read_sensor)
 sensor_thread.daemon = True
 sensor_thread.start()
 
-@app.route('/data')
-def get_data():
-    data = {
-        'temperature': temperature,
-        'humidity': humidity,
-        'time' : current_time
-    }
-    return jsonify(data)
-
 @app.route('/')
 def index():
-    return f'<h1>Temperature: {temperature:.2f} °C </h1><h1>Humidity: {humidity:.2f}%</h1>'
+    return render_template('index.html', temperature=temperature, humidity=humidity)
 
 
 if __name__ == '__main__':

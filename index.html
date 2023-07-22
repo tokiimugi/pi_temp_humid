@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Temp and Humidity</title>
+</head>
+<body>
+    <h1>Temperature: <span id="temperature">{{temperature}}</span>°C</h1>
+    <h1>Humidity: <span id="humidity">{{humidity}}</span>%</h1>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.min.js"></script>
+    <script>
+        const socket = io.connect('http://' + document.domain + ':' + location.port + '/data');
+        
+        socket.on('connect', function(){
+            console.log('Connected to the server');
+        });
+
+        socket.on('update_data', function(data){
+            document.getElementById('temperature').innerText = data.temperature.toFixed(2);
+            document.getElementById('humidity').innerText = data.humidity.toFixed(2);
+        });
+
+    </script>
+</body>
+</html>
