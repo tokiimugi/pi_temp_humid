@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, render_template
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, async_mode
 import Adafruit_DHT
 import time
 import datetime
@@ -7,7 +7,7 @@ import threading
 
 
 app = Flask(__name__)
-socketio = SocketIO(app)
+socketio = SocketIO(app, async_mode=async_mode)
 
 
 sensor = Adafruit_DHT.DHT22
