@@ -56,7 +56,7 @@ def index():
 
 if __name__ == '__main__':
     sensor_thread = threading.Thread(target=read_sensor)
-    sensor.thread.start()
+    sensor_thread.start()
 
     try:
         app.run(host='0.0.0.0', port=5000)
