@@ -32,8 +32,7 @@ def read_sensor():
             current_time = datetime.datetime.now()
         data = {
         'temperature': temperature,
-        'humidity': humidity,
-        'time' : current_time
+        'humidity': humidity
         }
         socketio.emit('update_data', data, namespace='/data')
         # Wait for some time before taking the next reading (e.g., 2 seconds)
@@ -45,7 +44,8 @@ def read_sensor():
 def get_data():
     data = {
         'temperature': temperature,
-        'humidity': humidity
+        'humidity': humidity,
+        'time' : current_time
     }
     return jsonify(data)
 
@@ -59,7 +59,7 @@ if __name__ == '__main__':
     sensor_thread.start()
 
     try:
-        app.run(host='0.0.0.0', port=5000)
+        socketio.run(app,host='0.0.0.0', port=5000)
     finally:
         sensor_thread_running = False
         sensor_thread.join()
