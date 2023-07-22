@@ -32,7 +32,7 @@ def read_sensor():
         'humidity': humidity,
         'time' : current_time
     }
-        socketio.emit('update_data', data, namespace='/data', broadcast=True)
+        socketio.emit('update_data', data, namespace='/data')
         # Wait for some time before taking the next reading (e.g., 2 seconds)
         time.sleep(2)
 
