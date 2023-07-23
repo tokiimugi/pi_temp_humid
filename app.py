@@ -21,6 +21,7 @@ current_time = datetime.datetime.now()
 
 sensor_thread_running = True
 
+@socketio.on('update_data', namespace='/data')
 def read_sensor():
     global temperature, humidity, current_time, sensor_thread_running
     while sensor_thread_running:
