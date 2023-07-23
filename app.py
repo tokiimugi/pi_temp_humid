@@ -4,6 +4,8 @@ import Adafruit_DHT
 import time
 import datetime
 import threading
+import signal
+import sys
 
 
 app = Flask(__name__)
@@ -58,8 +60,16 @@ if __name__ == '__main__':
     sensor_thread = threading.Thread(target=read_sensor)
     sensor_thread.start()
 
+    
     try:
         socketio.run(app,host='0.0.0.0', port=5000)
     finally:
         sensor_thread_running = False
         sensor_thread.join()
+        def shutdown_server(signum, frame):
+            print("Shutting down the server...")
+            socketio.stop()
+            print("Server shutdown complete.")
+            sys.exit(0)
+
+        signal.signal(signal.SIGINT, shutdown_server)
