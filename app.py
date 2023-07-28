@@ -41,14 +41,14 @@ def background_task():
     while sensor_thread_running:
         if connected_clients:
             data = {'temperature':temperature, 'humidity': humidity}
-            socketio.emit('update_data', data, '/data')
+            socketio.emit('update_data', data, namespace='/data')
         socketio.sleep(2)
 
-@socketio.on('connect')
+@socketio.on('connect', namespace='/data')
 def handle_connect():
     connected_clients.add(request.sid)
 
-@socketio.on('disconnect')
+@socketio.on('disconnect', namespace='/data')
 def handle_disconnect():
     connected_clients.remove(request.sid)
 
