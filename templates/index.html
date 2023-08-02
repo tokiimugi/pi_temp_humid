@@ -6,8 +6,13 @@
     <title>Home Temp and Humidity</title>
 </head>
 <body>
-    <h1>Temperature: <span id="temperature">{{temperature}}</span>°C</h1>
-    <h1>Humidity: <span id="humidity">{{humidity}}</span>%</h1>
+    <h1>Temperature:</h1> 
+    <h2> Room: <span id="temperature">{{temperature}}</span>°C</h2>
+    <h2> City: <span id="city_temp">0.00</span>°C</h2>
+
+    <h1>Humidity:</h1>
+    <h2> Room: <span id="humidity">{{humidity}}</span>%</h2>
+    <h2> City: <span id="city_humid">0.00</span>%</h2>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.min.js"></script>
     <script>
         const socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/data');
@@ -18,7 +23,9 @@
 
         socket.on('update_data', function(data){
             document.getElementById('temperature').innerText = data.temperature.toFixed(2);
+            document.getElementById('city_temp').innerText = data.city_temp.toFixed(2);
             document.getElementById('humidity').innerText = data.humidity.toFixed(2);
+            document.getElementById('city_humid').innerText = data.city_humid.toFixed(2);
         });
 
     </script>

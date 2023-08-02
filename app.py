@@ -4,12 +4,15 @@ import Adafruit_DHT
 import time
 import datetime
 import threading
+import requests
+from config import API_KEY
 
+API_URL = "http://api.weatherapi.com/v1/current.json"
 
+current_city = "Vancouver"
 
 app = Flask(__name__)
 socketio = SocketIO(app)
-
 
 sensor = Adafruit_DHT.DHT22
 gpio_pin = 4
@@ -37,10 +40,33 @@ def read_sensor():
         # Wait for some time before taking the next reading (e.g., 2 seconds)
         time.sleep(2)
 
+def get_weather_data(city):
+    params = {
+        "key" : API_KEY,
+        "q" : city
+    }
+    try:
+        # Send GET request to the API
+        response = requests.get(API_URL, params=params)
+        response.raise_for_status()  # Raise an exception for unsuccessful requests
+        data = response.json()
+        
+        # Extract relevant weather information from the response
+        temperature = data["current"]["temp_c"]
+        humidity = data["current"]["humidity"]
+
+        # Display the weather information
+        return {"city_temp" :temperature,
+                "city_humid" : humidity}
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error occurred: {e}")
+
+
 def background_task():
     while sensor_thread_running:
         if connected_clients:
-            data = {'temperature':temperature, 'humidity': humidity}
+            data = {'temperature':temperature, 'humidity': humidity, **get_weather_data(current_city)}
             socketio.emit('update_data', data, namespace='/data')
         socketio.sleep(2)
 
